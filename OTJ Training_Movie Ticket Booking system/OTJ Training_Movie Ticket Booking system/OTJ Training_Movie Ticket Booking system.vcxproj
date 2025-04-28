@@ -127,7 +127,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Cinema.cpp" />
+    <ClCompile Include="Hall.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Movie.cpp" />
     <ClCompile Include="OTJ Training_Movie Ticket Booking system.cpp" />
+    <ClCompile Include="Show.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Cinema.h" />
+    <ClInclude Include="Hall.h" />
+    <ClInclude Include="Movie.h" />
+    <ClInclude Include="Show.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

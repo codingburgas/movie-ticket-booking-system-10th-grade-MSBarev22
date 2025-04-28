@@ -8,3 +8,4 @@ std::string Movie::getTitle() const { return title; }
 std::string Movie::getLanguage() const { return language; }
 std::string Movie::getGenre() const { return genre; }
 std::string Movie::getReleaseDate() const { return releaseDate; }
+std::string Movie::getProjectionTime() const { return projectionTime; }
