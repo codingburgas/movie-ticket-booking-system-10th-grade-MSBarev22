@@ -129,6 +129,7 @@
   <ItemGroup>
     <ClCompile Include="Cinema.cpp" />
     <ClCompile Include="Hall.cpp" />
+    <ClCompile Include="Login.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Movie.cpp" />
     <ClCompile Include="OTJ Training_Movie Ticket Booking system.cpp" />
@@ -137,6 +138,7 @@
   <ItemGroup>
     <ClInclude Include="Cinema.h" />
     <ClInclude Include="Hall.h" />
+    <ClInclude Include="Login.h" />
     <ClInclude Include="Movie.h" />
     <ClInclude Include="Show.h" />
   </ItemGroup>

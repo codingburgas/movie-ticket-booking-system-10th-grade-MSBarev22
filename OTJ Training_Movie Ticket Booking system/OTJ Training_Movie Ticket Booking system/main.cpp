@@ -1,6 +1,6 @@
 #include <iostream>
-
+#include "Login.cpp"
 int main() {
-    std:: cout << "Running";
+    loginDisplay();
     return 0;
 }

@@ -1,7 +1,7 @@
 #include "Movie.h"
 
 Movie::Movie(const std::string& t, const std::string& l, const std::string& g, const std::string& r)
-    : title(t), language(l), genre(g), releaseDate(r) {
+     title(t), language(l), genre(g), releaseDate(r) {
 }
 
 std::string Movie::getTitle() const { return title; }
