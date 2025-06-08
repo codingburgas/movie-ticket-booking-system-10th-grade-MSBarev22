@@ -15,42 +15,24 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="OTJ Training_Movie Ticket Booking system.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Cinema.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Hall.cpp">
+    <ClCompile Include="OTJTraining_movie.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Movie.cpp">
+    <ClCompile Include="user.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Show.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Login.cpp">
+    <ClCompile Include="movie.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Cinema.h">
+    <ClInclude Include="user.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Hall.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Movie.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Show.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Login.h">
+    <ClInclude Include="movie.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

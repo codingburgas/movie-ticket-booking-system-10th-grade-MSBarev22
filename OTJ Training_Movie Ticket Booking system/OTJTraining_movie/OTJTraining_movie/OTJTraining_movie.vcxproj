@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{53056499-272d-4445-9311-5d8eb636c4ca}</ProjectGuid>
-    <RootNamespace>OTJTrainingMovieTicketBookingsystem</RootNamespace>
+    <ProjectGuid>{cbbd046b-ff2e-4136-9311-c8766593b7ee}</ProjectGuid>
+    <RootNamespace>OTJTrainingmovie</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -127,20 +127,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Cinema.cpp" />
-    <ClCompile Include="Hall.cpp" />
-    <ClCompile Include="Login.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Movie.cpp" />
-    <ClCompile Include="OTJ Training_Movie Ticket Booking system.cpp" />
-    <ClCompile Include="Show.cpp" />
+    <ClCompile Include="movie.cpp" />
+    <ClCompile Include="OTJTraining_movie.cpp" />
+    <ClCompile Include="user.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Cinema.h" />
-    <ClInclude Include="Hall.h" />
-    <ClInclude Include="Login.h" />
-    <ClInclude Include="Movie.h" />
-    <ClInclude Include="Show.h" />
+    <ClInclude Include="movie.h" />
+    <ClInclude Include="user.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
