@@ -127,12 +127,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CinemaSystem.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="movie.cpp" />
     <ClCompile Include="OTJTraining_movie.cpp" />
     <ClCompile Include="user.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CinemaSystem.h" />
     <ClInclude Include="movie.h" />
     <ClInclude Include="user.h" />
   </ItemGroup>

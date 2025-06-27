@@ -27,12 +27,18 @@
     <ClCompile Include="movie.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CinemaSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="user.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="movie.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CinemaSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
