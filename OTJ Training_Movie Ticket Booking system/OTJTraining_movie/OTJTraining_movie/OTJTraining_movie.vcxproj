@@ -127,15 +127,30 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Cinema.cpp" />
     <ClCompile Include="CinemaSystem.cpp" />
+    <ClCompile Include="Hall.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="movie.cpp" />
+    <ClCompile Include="Notification.cpp" />
     <ClCompile Include="OTJTraining_movie.cpp" />
+    <ClCompile Include="Payment.cpp" />
+    <ClCompile Include="Seat.cpp" />
+    <ClCompile Include="SeatingArrangement.cpp" />
+    <ClCompile Include="Show.cpp" />
     <ClCompile Include="user.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Booking.h" />
+    <ClInclude Include="Cinema.h" />
     <ClInclude Include="CinemaSystem.h" />
+    <ClInclude Include="Hall.h" />
     <ClInclude Include="movie.h" />
+    <ClInclude Include="Notification.h" />
+    <ClInclude Include="Payment.h" />
+    <ClInclude Include="Seat.h" />
+    <ClInclude Include="SeatingArrangement.h" />
+    <ClInclude Include="Show.h" />
     <ClInclude Include="user.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

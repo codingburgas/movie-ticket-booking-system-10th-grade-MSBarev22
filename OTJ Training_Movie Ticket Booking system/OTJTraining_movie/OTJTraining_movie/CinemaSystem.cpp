@@ -1,274 +1,221 @@
 #include "CinemaSystem.h"
+#include "Payment.h"
+#include "Notification.h"
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+#include <limits>
+#include <memory>
 
 CinemaSystem::CinemaSystem() {
-    loggedIn = false;
-    loadSampleData();
+    // Optionally, add some sample data for demonstration
+    // Sample Movie
+    Movie movie1("Interstellar", "English", "Sci-Fi", "2014");
+    Movie movie2("Avatar 2", "English", "Action", "2022");
+
+    // Sample Halls
+    auto hall1 = std::make_unique<Hall>("Hall 1", 30);
+    auto hall2 = std::make_unique<Hall>("Hall 2", 30);
+
+    // Sample Shows
+    auto show1 = std::make_unique<Show>(movie1, "18:00");
+    auto show2 = std::make_unique<Show>(movie2, "20:00");
+
+    hall1->addShow(std::move(show1));
+    hall2->addShow(std::move(show2));
+
+    // Sample Cinema
+    auto cinema1 = std::make_unique<Cinema>("Cinema City Paradise", "Sofia");
+    cinema1->addHall(std::move(hall1));
+    cinema1->addHall(std::move(hall2));
+
+    cinemas.push_back(std::move(cinema1));
+    movies.push_back(movie1);
+    movies.push_back(movie2);
 }
 
-void CinemaSystem::loadSampleData() {
-    cities.clear();
-
-
-    City sofia;
-    sofia.name = "Sofia";
-
-    // Cinema 1
-    Cinema cin1;
-    cin1.name = "Cinema City Paradise";
-
-    Movie m1;
-    m1.title = "Interstellar";
-    m1.language = "English";
-    m1.genre = "Sci-Fi";
-    m1.releaseDate = "2014";
-
-    Hall h1;
-    h1.name = "Hall 1";
-    Show s1;
-    s1.time = "18:00";
-    s1.price = 12.50;
-    s1.seats.resize(5, std::vector<Seat>(5, { false, "silver" }));
-    h1.shows.push_back(s1);
-
-    m1.halls.push_back(h1);
-    cin1.movies.push_back(m1);
-
-   
-    Movie m2;
-    m2.title = "Avatar 2";
-    m2.language = "English";
-    m2.genre = "Action";
-    m2.releaseDate = "2022";
-
-    Hall h2;
-    h2.name = "Hall 2";
-    Show s2;
-    s2.time = "20:00";
-    s2.price = 15.00;
-    s2.seats.resize(5, std::vector<Seat>(5, { false, "gold" }));
-    h2.shows.push_back(s2);
-
-    m2.halls.push_back(h2);
-    cin1.movies.push_back(m2);
-
-    sofia.cinemas.push_back(cin1);
-
-    
-    Cinema cin2;
-    cin2.name = "Arena Mladost";
-    cin2.movies.push_back(m1);
-    cin2.movies.push_back(m2);
-
-    sofia.cinemas.push_back(cin2);
-    cities.push_back(sofia);
+void CinemaSystem::displayWelcome() const {
+    std::cout << "Welcome to the Movie Ticket Booking System!" << std::endl;
+    std::cout << "------------------------------------------" << std::endl;
 }
+
 void CinemaSystem::run() {
-    loginMenu();
-    if (loggedIn)
-        userMenu();
-}
-
-void CinemaSystem::loginMenu() {
     int choice;
     do {
-        std::cout << "\n--- Welcome to the Movie Booking System ---\n";
-        std::cout << "1. Register\n2. Login\n3. Exit\n> ";
+        std::cout << "\n1. Register\n2. Login\n3. Exit\n> ";
         std::cin >> choice;
-
         switch (choice) {
-        case 1: registerUser(); break;
-        case 2: loginUser(); break;
-        case 3: return;
-        default: std::cout << "Invalid choice.\n";
+            case 1: registerUser(); break;
+            case 2: if (loginUser()) {
+                if (isAdmin) showAdminMenu();
+                else userMenu();
+            } break;
+            case 3: std::cout << "Goodbye!\n"; break;
+            default: std::cout << "Invalid choice.\n";
         }
-    } while (!loggedIn);
+    } while (choice != 3);
 }
 
 void CinemaSystem::registerUser() {
     std::ofstream out("users.txt", std::ios::app);
-    std::string user, pass;
+    std::string user, pass, role;
     std::cout << "Choose username: ";
     std::cin >> user;
     std::cout << "Choose password: ";
     std::cin >> pass;
-    out << user << " " << pass << "\n";
+    std::cout << "Enter role (admin/user): ";
+    std::cin >> role;
+    if (role != "admin" && role != "user") role = "user";
+    out << user << " " << pass << " " << role << "\n";
     std::cout << "Registration successful!\n";
 }
 
-void CinemaSystem::loginUser() {
+bool CinemaSystem::loginUser() {
     std::ifstream in("users.txt");
-    std::string user, pass, u, p;
+    std::string user, pass, u, p, r;
     std::cout << "Username: ";
     std::cin >> user;
     std::cout << "Password: ";
     std::cin >> pass;
-
-    while (in >> u >> p) {
+    while (in >> u >> p >> r) {
         if (u == user && p == pass) {
             std::cout << "Login successful!\n";
-            currentUser = user;
-            loggedIn = true;
-            return;
+            isAdmin = (r == "admin");
+            currentUserRole = r;
+            return true;
         }
     }
     std::cout << "Login failed. Try again.\n";
+    return false;
 }
 
 void CinemaSystem::userMenu() {
-    int cityChoice;
-    showCities();
-    std::cout << "Choose city: ";
-    std::cin >> cityChoice;
-    if (cityChoice < 1 || cityChoice > cities.size()) return;
-
-    int cinemaChoice;
-    showCinemas(cityChoice - 1);
-    std::cout << "Choose cinema: ";
-    std::cin >> cinemaChoice;
-    if (cinemaChoice < 1 || cinemaChoice > cities[cityChoice - 1].cinemas.size()) return;
-
-    int movieChoice;
-    showMovies(cityChoice - 1, cinemaChoice - 1);
-    std::cout << "Choose movie: ";
-    std::cin >> movieChoice;
-
-    Cinema& cinema = cities[cityChoice - 1].cinemas[cinemaChoice - 1];
-    if (movieChoice < 1 || movieChoice > cinema.movies.size()) return;
-
-    showMovieDetails(cinema.movies[movieChoice - 1]);
-}
-void CinemaSystem::showCities() {
-    std::cout << "\nCities:\n";
-    for (size_t i = 0; i < cities.size(); i++) {
-        std::cout << i + 1 << ". " << cities[i].name << "\n";
-    }
-}
-
-void CinemaSystem::showCinemas(int cityIndex) {
-    std::cout << "\nCinemas in " << cities[cityIndex].name << ":\n";
-    for (size_t i = 0; i < cities[cityIndex].cinemas.size(); i++) {
-        std::cout << i + 1 << ". " << cities[cityIndex].cinemas[i].name << "\n";
-    }
-}
-
-void CinemaSystem::showMovies(int cityIndex, int cinemaIndex) {
-    std::cout << "\nMovies in " << cities[cityIndex].cinemas[cinemaIndex].name << ":\n";
-    const auto& movies = cities[cityIndex].cinemas[cinemaIndex].movies;
-    for (size_t i = 0; i < movies.size(); i++) {
-        std::cout << i + 1 << ". " << movies[i].title << " (" << movies[i].releaseDate << ") - " << movies[i].genre << "\n";
-    }
-}
-
-void CinemaSystem::showMovieDetails(const Movie& movie) {
-    std::cout << "\nMovie: " << movie.title << "\nLanguage: " << movie.language << "\nGenre: " << movie.genre << "\nRelease Date: " << movie.releaseDate << "\n";
-    std::cout << "Available Halls and Shows:\n";
-
-    for (size_t h = 0; h < movie.halls.size(); h++) {
-        std::cout << "Hall " << h + 1 << ": " << movie.halls[h].name << "\n";
-        for (size_t s = 0; s < movie.halls[h].shows.size(); s++) {
-            std::cout << "  Show " << s + 1 << ": " << movie.halls[h].shows[s].time << ", Price: $" << movie.halls[h].shows[s].price << "\n";
+    int choice;
+    do {
+        std::cout << "\n1. List Cinemas\n2. List Movies\n3. Logout\n> ";
+        std::cin >> choice;
+        switch (choice) {
+        case 1: listCinemas(); break;
+        case 2: listMovies(); break;
+        case 3: std::cout << "Logging out...\n"; break;
+        default: std::cout << "Invalid choice.\n";
         }
-    }
-
-    int hallChoice, showChoice;
-    std::cout << "Choose hall number: ";
-    std::cin >> hallChoice;
-    if (hallChoice < 1 || hallChoice >(int)movie.halls.size()) return;
-    std::cout << "Choose show number: ";
-    std::cin >> showChoice;
-    if (showChoice < 1 || showChoice >(int)movie.halls[hallChoice - 1].shows.size()) return;
-
-   
-    Movie& modifiableMovie = const_cast<Movie&>(movie);
-    bookTickets(modifiableMovie, modifiableMovie.halls[hallChoice - 1], modifiableMovie.halls[hallChoice - 1].shows[showChoice - 1]);
+    } while (choice != 3);
 }
 
-void CinemaSystem::bookTickets(Movie& movie, Hall& hall, Show& show) {
-    std::cout << "\nSeat layout (X = reserved, O = available):\n";
-
-
-    for (size_t i = 0; i < show.seats.size(); i++) {
-        for (size_t j = 0; j < show.seats[i].size(); j++) {
-            if (show.seats[i][j].reserved)
-                std::cout << "X ";
-            else
-                std::cout << "O ";
+void CinemaSystem::showAdminMenu() {
+    int choice;
+    do {
+        std::cout << "\n--- Admin Menu ---\n";
+        std::cout << "1. List Cinemas\n2. List Movies\n3. Logout\n> ";
+        std::cin >> choice;
+        switch (choice) {
+            case 1: listCinemas(); break;
+            case 2: listMovies(); break;
+            case 3: std::cout << "Logging out...\n"; break;
+            default: std::cout << "Invalid choice.\n";
         }
-        std::cout << "\n";
+    } while (choice != 3);
+}
+
+void CinemaSystem::listCinemas() {
+    std::cout << "\nAvailable Cinemas:" << std::endl;
+    for (size_t i = 0; i < cinemas.size(); ++i) {
+        std::cout << i + 1 << ". " << cinemas[i]->getName() << " (" << cinemas[i]->getCity() << ")" << std::endl;
     }
+    std::cout << "Select a cinema (0 to go back): ";
+    int c;
+    std::cin >> c;
+    if (c < 1 || c >(int)cinemas.size()) return;
+    listHalls(*cinemas[c - 1]);
+}
 
-    std::cout << "Seat types: silver - $10, gold - $15, platinum - $20\n";
+void CinemaSystem::listHalls(Cinema& cinema) {
+    const auto& halls = cinema.getHalls();
+    std::cout << "\nHalls in " << cinema.getName() << ":" << std::endl;
+    for (size_t i = 0; i < halls.size(); ++i) {
+        std::cout << i + 1 << ". " << halls[i]->getName() << std::endl;
+    }
+    std::cout << "Select a hall (0 to go back): ";
+    int h;
+    std::cin >> h;
+    if (h < 1 || h >(int)halls.size()) return;
+    listShows(*halls[h - 1]);
+}
 
-    std::cout << "Enter seat coordinates to book (row and column, 1-based). Enter 0 0 to finish.\n";
+void CinemaSystem::listShows(Hall& hall) {
+    const auto& shows = hall.getShows();
+    std::cout << "\nShows in " << hall.getName() << ":" << std::endl;
+    for (size_t i = 0; i < shows.size(); ++i) {
+        std::cout << i + 1 << ". " << shows[i]->getMovie().getTitle() << " at " << shows[i]->getTime() << std::endl;
+    }
+    std::cout << "Select a show (0 to go back): ";
+    int s;
+    std::cin >> s;
+    if (s < 1 || s >(int)shows.size()) return;
+    bookSeats(*shows[s - 1]);
+}
 
-    std::vector<std::pair<int, int>> selectedSeats;
-    double total = 0.0;
+void CinemaSystem::listMovies() {
+    std::cout << "\nAvailable Movies:" << std::endl;
+    for (size_t i = 0; i < movies.size(); ++i) {
+        std::cout << i + 1 << ". " << movies[i].getTitle() << " (" << movies[i].getReleaseDate() << ") - " << movies[i].getGenre() << std::endl;
+    }
+    std::cout << "(Press Enter to continue)";
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    std::cin.get();
+}
 
+void CinemaSystem::bookSeats(Show& show) {
+    SeatingArrangement* seating = show.getSeating();
+    seating->display();
+    std::cout << "\nEnter seat row and number to book (e.g., 1 1), 0 0 to finish:\n";
+    std::vector<Seat*> selectedSeats;
     while (true) {
-        int r, c;
-        std::cout << "Seat (row col): ";
-        std::cin >> r >> c;
-        if (r == 0 && c == 0) break;
-
-        if (r < 1 || r >(int)show.seats.size() || c < 1 || c >(int)show.seats[0].size()) {
-            std::cout << "Invalid seat position.\n";
-            continue;
+        int row, num;
+        std::cout << "Seat (row number): ";
+        std::cin >> row >> num;
+        if (row == 0 && num == 0) break;
+        auto& seats = seating->getSeats();
+        bool found = false;
+        for (auto& seat : seats) {
+            if (seat.getRow() == row - 1 && seat.getNumber() == num - 1) {
+                if (seat.isBooked()) {
+                    std::cout << "Seat already booked!\n";
+                }
+                else {
+                    seat.book();
+                    selectedSeats.push_back(&seat);
+                    std::cout << "Seat booked.\n";
+                }
+                found = true;
+                break;
+            }
         }
-        Seat& seat = show.seats[r - 1][c - 1];
-        if (seat.reserved) {
-            std::cout << "Seat already reserved.\n";
-            continue;
-        }
-
-        seat.reserved = true;
-        selectedSeats.emplace_back(r, c);
-
-       
-        if (seat.type == "silver")
-            total += 10;
-        else if (seat.type == "gold")
-            total += 15;
-        else if (seat.type == "platinum")
-            total += 20;
-
-        std::cout << "Seat (" << r << "," << c << ") reserved.\n";
+        if (!found) std::cout << "Invalid seat.\n";
     }
-
     if (selectedSeats.empty()) {
-        std::cout << "No seats selected. Booking cancelled.\n";
+        std::cout << "No seats selected.\n";
         return;
     }
-
-    std::cout << "Total to pay: $" << total << "\n";
-
-    
-    std::cout << "Pay with credit card? (y/n): ";
-    char payChoice;
-    std::cin >> payChoice;
-    if (payChoice == 'y' || payChoice == 'Y') {
-        std::cout << "Payment successful!\n";
-        showReceipt(movie.title, show.time, selectedSeats, total);
-    }
-    else {
-        std::cout << "Payment cancelled, seats released.\n";
-       
-        for (auto& seatPos : selectedSeats) {
-            show.seats[seatPos.first - 1][seatPos.second - 1].reserved = false;
+    double total = 0.0;
+    for (auto* seat : selectedSeats) {
+        switch (seat->getType()) {
+        case SeatType::SILVER: total += 10; break;
+        case SeatType::GOLD: total += 15; break;
+        case SeatType::PLATINUM: total += 20; break;
         }
     }
-}
-
-void CinemaSystem::showReceipt(const std::string& movieTitle, const std::string& time, const std::vector<std::pair<int, int>>& seats, double total) {
-    std::cout << "\n--- DIGITAL RECEIPT ---\n";
-    std::cout << "Movie: " << movieTitle << "\n";
-    std::cout << "Show time: " << time << "\n";
-    std::cout << "Seats booked: ";
-    for (const auto& seat : seats) {
-        std::cout << "(" << seat.first << "," << seat.second << ") ";
+    std::cout << "Total price: $" << total << "\n";
+    std::cout << "Pay with credit card? (y/n): ";
+    char pay;
+    std::cin >> pay;
+    if (pay == 'y' || pay == 'Y') {
+        Payment::processPayment("credit card", total);
+        Notification::send("Booking confirmed!");
     }
-    std::cout << "\nTotal Paid: $" << total << "\n";
-    std::cout << "Thank you for your purchase!\n";
+    else {
+        std::cout << "Booking cancelled.\n";
+        for (auto* seat : selectedSeats) seat->book(); // Optionally, unbook if you add an unbook() method
+    }
 }
