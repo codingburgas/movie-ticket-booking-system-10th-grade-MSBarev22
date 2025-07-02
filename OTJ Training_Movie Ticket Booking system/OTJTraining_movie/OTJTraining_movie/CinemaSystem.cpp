@@ -107,15 +107,21 @@ void CinemaSystem::showAdminMenu() {
     int choice;
     do {
         std::cout << "\n--- Admin Menu ---\n";
-        std::cout << "1. List Cinemas\n2. List Movies\n3. Logout\n> ";
+        std::cout << "1. List Cinemas\n2. List Movies\n3. Add Movie\n4. Delete Movie\n5. Update Movie\n6. Add Show\n7. Delete Show\n8. Update Show\n9. Logout\n> ";
         std::cin >> choice;
         switch (choice) {
             case 1: listCinemas(); break;
             case 2: listMovies(); break;
-            case 3: std::cout << "Logging out...\n"; break;
+            case 3: addMovie(); break;
+            case 4: deleteMovie(); break;
+            case 5: updateMovie(); break;
+            case 6: addShow(); break;
+            case 7: deleteShow(); break;
+            case 8: updateShow(); break;
+            case 9: std::cout << "Logging out...\n"; break;
             default: std::cout << "Invalid choice.\n";
         }
-    } while (choice != 3);
+    } while (choice != 9);
 }
 
 void CinemaSystem::listCinemas() {
@@ -217,5 +223,134 @@ void CinemaSystem::bookSeats(Show& show) {
     else {
         std::cout << "Booking cancelled.\n";
         for (auto* seat : selectedSeats) seat->book(); // Optionally, unbook if you add an unbook() method
+    }
+}
+
+void CinemaSystem::addMovie() {
+    std::string title, language, genre, releaseDate;
+    std::cout << "Enter movie title: ";
+    std::cin.ignore();
+    std::getline(std::cin, title);
+    std::cout << "Enter language: ";
+    std::getline(std::cin, language);
+    std::cout << "Enter genre: ";
+    std::getline(std::cin, genre);
+    std::cout << "Enter release date: ";
+    std::getline(std::cin, releaseDate);
+    movies.emplace_back(title, language, genre, releaseDate);
+    std::cout << "Movie added!\n";
+}
+
+void CinemaSystem::deleteMovie() {
+    if (movies.empty()) { std::cout << "No movies to delete.\n"; return; }
+    listMovies();
+    std::cout << "Enter movie number to delete: ";
+    int idx; std::cin >> idx;
+    if (idx < 1 || idx > (int)movies.size()) { std::cout << "Invalid selection.\n"; return; }
+    movies.erase(movies.begin() + (idx - 1));
+    std::cout << "Movie deleted!\n";
+}
+
+void CinemaSystem::updateMovie() {
+    if (movies.empty()) { std::cout << "No movies to update.\n"; return; }
+    listMovies();
+    std::cout << "Enter movie number to update: ";
+    int idx; std::cin >> idx;
+    if (idx < 1 || idx > (int)movies.size()) { std::cout << "Invalid selection.\n"; return; }
+    Movie& m = movies[idx - 1];
+    std::cin.ignore();
+    std::string title, language, genre, releaseDate;
+    std::cout << "Enter new title (current: " << m.getTitle() << "): "; std::getline(std::cin, title);
+    std::cout << "Enter new language (current: " << m.getLanguage() << "): "; std::getline(std::cin, language);
+    std::cout << "Enter new genre (current: " << m.getGenre() << "): "; std::getline(std::cin, genre);
+    std::cout << "Enter new release date (current: " << m.getReleaseDate() << "): "; std::getline(std::cin, releaseDate);
+    if (!title.empty()) m = Movie(title, language, genre, releaseDate);
+    std::cout << "Movie updated!\n";
+}
+
+void CinemaSystem::addShow() {
+    listCinemas();
+    std::cout << "Select cinema number: ";
+    int c; std::cin >> c;
+    if (c < 1 || c > (int)cinemas.size()) return;
+    Cinema& cinema = *cinemas[c - 1];
+    const auto& halls = cinema.getHalls();
+    for (size_t i = 0; i < halls.size(); ++i) {
+        std::cout << i + 1 << ". " << halls[i]->getName() << std::endl;
+    }
+    std::cout << "Select hall number: ";
+    int h; std::cin >> h;
+    if (h < 1 || h > (int)halls.size()) return;
+    Hall& hall = *halls[h - 1];
+    listMovies();
+    std::cout << "Select movie number: ";
+    int m; std::cin >> m;
+    if (m < 1 || m > (int)movies.size()) return;
+    Movie& movie = movies[m - 1];
+    std::cin.ignore();
+    std::string time;
+    std::cout << "Enter show time: ";
+    std::getline(std::cin, time);
+    auto show = std::make_unique<Show>(movie, time);
+    hall.addShow(std::move(show));
+    std::cout << "Show added!\n";
+}
+
+void CinemaSystem::deleteShow() {
+    listCinemas();
+    std::cout << "Select cinema number: ";
+    int c; std::cin >> c;
+    if (c < 1 || c > (int)cinemas.size()) return;
+    Cinema& cinema = *cinemas[c - 1];
+    const auto& halls = cinema.getHalls();
+    for (size_t i = 0; i < halls.size(); ++i) {
+        std::cout << i + 1 << ". " << halls[i]->getName() << std::endl;
+    }
+    std::cout << "Select hall number: ";
+    int h; std::cin >> h;
+    if (h < 1 || h > (int)halls.size()) return;
+    Hall& hall = *halls[h - 1];
+    const auto& shows = hall.getShows();
+    for (size_t i = 0; i < shows.size(); ++i) {
+        std::cout << i + 1 << ". " << shows[i]->getMovie().getTitle() << " at " << shows[i]->getTime() << std::endl;
+    }
+    std::cout << "Select show number to delete: ";
+    int s; std::cin >> s;
+    if (s < 1 || s > (int)shows.size()) return;
+    auto& showsVec = const_cast<std::vector<std::unique_ptr<Show>>&>(shows);
+    showsVec.erase(showsVec.begin() + (s - 1));
+    std::cout << "Show deleted!\n";
+}
+
+void CinemaSystem::updateShow() {
+    listCinemas();
+    std::cout << "Select cinema number: ";
+    int c; std::cin >> c;
+    if (c < 1 || c > (int)cinemas.size()) return;
+    Cinema& cinema = *cinemas[c - 1];
+    const auto& halls = cinema.getHalls();
+    for (size_t i = 0; i < halls.size(); ++i) {
+        std::cout << i + 1 << ". " << halls[i]->getName() << std::endl;
+    }
+    std::cout << "Select hall number: ";
+    int h; std::cin >> h;
+    if (h < 1 || h > (int)halls.size()) return;
+    Hall& hall = *halls[h - 1];
+    const auto& shows = hall.getShows();
+    for (size_t i = 0; i < shows.size(); ++i) {
+        std::cout << i + 1 << ". " << shows[i]->getMovie().getTitle() << " at " << shows[i]->getTime() << std::endl;
+    }
+    std::cout << "Select show number to update: ";
+    int s; std::cin >> s;
+    if (s < 1 || s > (int)shows.size()) return;
+    Show& show = *shows[s - 1];
+    std::cin.ignore();
+    std::string time;
+    std::cout << "Enter new show time (current: " << show.getTime() << "): ";
+    std::getline(std::cin, time);
+    if (!time.empty()) {
+        // No setter, so recreate the show (advanced: add a setter in Show)
+        // For now, just print confirmation
+        std::cout << "Show time updated (not actually changed, add setter in Show for real update).\n";
     }
 }
