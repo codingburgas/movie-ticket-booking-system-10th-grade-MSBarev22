@@ -24,7 +24,7 @@ public:
     void listMovies();
     void bookSeats(Show& show);
     void showAdminMenu();
-    // Admin movie/show management
+
     void addMovie();
     void deleteMovie();
     void updateMovie();

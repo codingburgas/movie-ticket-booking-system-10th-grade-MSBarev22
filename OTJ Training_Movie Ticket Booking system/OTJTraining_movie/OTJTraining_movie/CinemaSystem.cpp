@@ -260,7 +260,7 @@ void CinemaSystem::bookSeats(Show& show) {
     }
     else {
         std::cout << "Booking cancelled.\n";
-        for (auto* seat : selectedSeats) seat->book(); // Optionally, unbook if you add an unbook() method
+        for (auto* seat : selectedSeats) seat->book(); 
     }
 }
 
@@ -387,8 +387,6 @@ void CinemaSystem::updateShow() {
     std::cout << "Enter new show time (current: " << show.getTime() << "): ";
     std::getline(std::cin, time);
     if (!time.empty()) {
-        // No setter, so recreate the show (advanced: add a setter in Show)
-        // For now, just print confirmation
         std::cout << "Show time updated (not actually changed, add setter in Show for real update).\n";
     }
 }
