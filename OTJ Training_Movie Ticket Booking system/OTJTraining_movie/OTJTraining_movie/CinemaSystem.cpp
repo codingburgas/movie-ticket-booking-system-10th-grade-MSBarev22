@@ -8,30 +8,65 @@
 #include <memory>
 
 CinemaSystem::CinemaSystem() {
-    // Optionally, add some sample data for demonstration
-    // Sample Movie
+    // Sample Movies
     Movie movie1("Interstellar", "English", "Sci-Fi", "2014");
     Movie movie2("Avatar 2", "English", "Action", "2022");
+    Movie movie3("The Dark Knight", "English", "Action", "2008");
+    Movie movie4("Inception", "English", "Sci-Fi", "2010");
+    Movie movie5("Titanic", "English", "Romance", "1997");
+    Movie movie6("The Matrix", "English", "Sci-Fi", "1999");
 
-    // Sample Halls
-    auto hall1 = std::make_unique<Hall>("Hall 1", 30);
-    auto hall2 = std::make_unique<Hall>("Hall 2", 30);
-
-    // Sample Shows
-    auto show1 = std::make_unique<Show>(movie1, "18:00");
-    auto show2 = std::make_unique<Show>(movie2, "20:00");
-
-    hall1->addShow(std::move(show1));
-    hall2->addShow(std::move(show2));
-
-    // Sample Cinema
+    // Cinema 1: Cinema City Paradise
+    auto hall1_1 = std::make_unique<Hall>("Hall 1", 30);
+    auto hall1_2 = std::make_unique<Hall>("Hall 2", 25);
+    auto show1_1 = std::make_unique<Show>(movie1, "18:00");
+    auto show1_2 = std::make_unique<Show>(movie2, "20:00");
+    auto show1_3 = std::make_unique<Show>(movie3, "22:00");
+    hall1_1->addShow(std::move(show1_1));
+    hall1_1->addShow(std::move(show1_2));
+    hall1_2->addShow(std::move(show1_3));
     auto cinema1 = std::make_unique<Cinema>("Cinema City Paradise", "Sofia");
-    cinema1->addHall(std::move(hall1));
-    cinema1->addHall(std::move(hall2));
+    cinema1->addHall(std::move(hall1_1));
+    cinema1->addHall(std::move(hall1_2));
 
+    // Cinema 2: Arena Mladost
+    auto hall2_1 = std::make_unique<Hall>("Hall A", 40);
+    auto hall2_2 = std::make_unique<Hall>("Hall B", 35);
+    auto show2_1 = std::make_unique<Show>(movie4, "19:00");
+    auto show2_2 = std::make_unique<Show>(movie5, "21:00");
+    auto show2_3 = std::make_unique<Show>(movie6, "23:00");
+    hall2_1->addShow(std::move(show2_1));
+    hall2_1->addShow(std::move(show2_2));
+    hall2_2->addShow(std::move(show2_3));
+    auto cinema2 = std::make_unique<Cinema>("Arena Mladost", "Sofia");
+    cinema2->addHall(std::move(hall2_1));
+    cinema2->addHall(std::move(hall2_2));
+
+    // Cinema 3: CineGrand
+    auto hall3_1 = std::make_unique<Hall>("Main Hall", 50);
+    auto hall3_2 = std::make_unique<Hall>("VIP Hall", 20);
+    auto show3_1 = std::make_unique<Show>(movie1, "17:30");
+    auto show3_2 = std::make_unique<Show>(movie2, "19:30");
+    auto show3_3 = std::make_unique<Show>(movie4, "21:30");
+    hall3_1->addShow(std::move(show3_1));
+    hall3_1->addShow(std::move(show3_2));
+    hall3_2->addShow(std::move(show3_3));
+    auto cinema3 = std::make_unique<Cinema>("CineGrand", "Plovdiv");
+    cinema3->addHall(std::move(hall3_1));
+    cinema3->addHall(std::move(hall3_2));
+
+    // Add all cinemas
     cinemas.push_back(std::move(cinema1));
+    cinemas.push_back(std::move(cinema2));
+    cinemas.push_back(std::move(cinema3));
+
+    // Add all movies
     movies.push_back(movie1);
     movies.push_back(movie2);
+    movies.push_back(movie3);
+    movies.push_back(movie4);
+    movies.push_back(movie5);
+    movies.push_back(movie6);
 }
 
 void CinemaSystem::displayWelcome() const {
@@ -65,7 +100,10 @@ void CinemaSystem::registerUser() {
     std::cin >> pass;
     std::cout << "Enter role (admin/user): ";
     std::cin >> role;
-    if (role != "admin" && role != "user") role = "user";
+    if (role != "admin" && role != "user") {
+        std::cout << "Invalid role. Defaulting to 'user'.\n";
+        role = "user";
+    }
     out << user << " " << pass << " " << role << "\n";
     std::cout << "Registration successful!\n";
 }

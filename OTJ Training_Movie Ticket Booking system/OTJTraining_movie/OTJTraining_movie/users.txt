@@ -1,6 +1,4 @@
-milko\ milko
-milko milko
-milko milko
-admin 12345678
-admin admin admin
+milko milko user
+ilko ilko user
+milko milko user
 admin admin admin
